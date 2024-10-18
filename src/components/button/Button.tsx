@@ -1,5 +1,3 @@
-// import styles from './Button.module.css'
-
 import { forwardRef } from 'react'
 import { ButtonProps } from './Button.types'
 import clsx from 'clsx'
