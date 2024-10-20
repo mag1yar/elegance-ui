@@ -1,6 +1,8 @@
 import React from '@storybook/react'
 import type { Preview } from '@storybook/react'
 import { EleganceProvider } from '../src/components'
+import 'non.geist'
+import '../src/global.css'
 
 const preview: Preview = {
   parameters: {
@@ -15,7 +17,7 @@ const preview: Preview = {
     (Story) => (
       <EleganceProvider
         theme={{
-          fontFamily: 'Inter',
+          fontFamily: 'Geist Variable',
         }}
       >
         <Story />

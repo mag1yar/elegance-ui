@@ -5,14 +5,12 @@ import { cva } from 'class-variance-authority'
 export const buttonVariants = cva(styles.button, {
   variants: {
     variant: {
-      default: '',
-    },
-    size: {
-      default: '',
+      filled: styles.filled,
+      outline: styles.outline,
+      text: styles.text,
     },
   },
   defaultVariants: {
-    variant: 'default',
-    size: 'default',
+    variant: 'filled',
   },
 })
