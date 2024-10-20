@@ -25,16 +25,20 @@ export default defineConfig({
     },
     rollupOptions: {
       external: ['react', 'react-dom', 'react/jsx-runtime'],
-      input: Object.fromEntries(
-        glob
-          .sync('src/**/*.{ts,tsx}', {
-            ignore: ['src/**/*.d.ts', 'src/**/*.stories.{ts,tsx}'],
-          })
-          .map((file) => [
-            relative('src', file.slice(0, file.length - extname(file).length)),
-            fileURLToPath(new URL(file, import.meta.url)),
-          ])
-      ),
+      input: {
+        main: resolve(__dirname, 'src/main.ts'),
+        ...Object.fromEntries(
+          glob
+            .sync('src/**/*.{ts,tsx}', {
+              ignore: ['src/**/*.d.ts', 'src/**/*.stories.{ts,tsx}', 'src/**/*.test.{ts,tsx}'],
+            })
+            .map((file) => [
+              relative('src', file.slice(0, file.length - extname(file).length)),
+              fileURLToPath(new URL(file, import.meta.url)),
+            ])
+        ),
+      },
+
       output: {
         entryFileNames: '[name].js',
         assetFileNames: (assetInfo) => {
