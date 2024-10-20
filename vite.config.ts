@@ -3,7 +3,6 @@
 
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import { libInjectCss } from 'vite-plugin-lib-inject-css'
 import dts from 'vite-plugin-dts'
 import { glob } from 'glob'
 
@@ -14,8 +13,10 @@ import { fileURLToPath } from 'node:url'
 export default defineConfig({
   plugins: [
     react(),
-    libInjectCss(),
-    dts({ exclude: ['**/*.stories.tsx', 'src/test', '**/*.test.tsx'] }),
+    dts({
+      tsconfigPath: './tsconfig.app.json',
+      rollupTypes: true,
+    }),
   ],
   build: {
     lib: {
@@ -36,7 +37,10 @@ export default defineConfig({
       ),
       output: {
         entryFileNames: '[name].js',
-        assetFileNames: 'assets/[name][extname]',
+        assetFileNames: (assetInfo) => {
+          if (assetInfo.name === 'style.css') return 'styles.css'
+          return 'assets/[name][extname]'
+        },
         globals: {
           react: 'React',
           'react-dom': 'React-dom',
@@ -44,6 +48,7 @@ export default defineConfig({
         },
       },
     },
+    cssCodeSplit: false,
   },
   test: {
     globals: true,
