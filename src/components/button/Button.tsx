@@ -7,7 +7,17 @@ import { useMergeRefs } from '../../hooks'
 import { useButtonAnimation } from './hooks'
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
-  const { asChild, className, variant, animation, ...rest } = props
+  const {
+    asChild,
+    className,
+    variant,
+    animation,
+    onMouseEnter,
+    onMouseLeave,
+    onMouseDown,
+    onMouseUp,
+    ...rest
+  } = props
 
   const Comp = asChild ? Slot : 'button'
 
@@ -21,10 +31,22 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
       {...rest}
       ref={mergedRef}
       className={clsx(buttonVariants({ className, variant }))}
-      onMouseEnter={handleHoverStart}
-      onMouseLeave={handleHoverEnd}
-      onMouseDown={handleTapStart}
-      onMouseUp={handleTapEnd}
+      onMouseEnter={(e) => {
+        handleHoverStart()
+        onMouseEnter?.(e)
+      }}
+      onMouseLeave={(e) => {
+        handleHoverEnd()
+        onMouseLeave?.(e)
+      }}
+      onMouseDown={(e) => {
+        handleTapStart()
+        onMouseDown?.(e)
+      }}
+      onMouseUp={(e) => {
+        handleTapEnd()
+        onMouseUp?.(e)
+      }}
     />
   )
 })

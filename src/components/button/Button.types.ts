@@ -12,5 +12,5 @@ export type ButtonAnimation = {
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean
-    animation?: ButtonAnimation
+    animation?: ButtonAnimation | boolean
   }

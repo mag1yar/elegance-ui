@@ -30,7 +30,12 @@ export default defineConfig({
         ...Object.fromEntries(
           glob
             .sync('src/**/*.{ts,tsx}', {
-              ignore: ['src/**/*.d.ts', 'src/**/*.stories.{ts,tsx}', 'src/**/*.test.{ts,tsx}'],
+              ignore: [
+                'src/**/*.d.ts',
+                'src/**/*.stories.{ts,tsx}',
+                'src/**/*.test.{ts,tsx}',
+                'src/test/**/*',
+              ],
             })
             .map((file) => [
               relative('src', file.slice(0, file.length - extname(file).length)),

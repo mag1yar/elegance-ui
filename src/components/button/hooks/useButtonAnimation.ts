@@ -2,8 +2,25 @@ import { useAnimate } from 'framer-motion'
 import { ButtonAnimation } from '../Button.types'
 import { useCallback, useEffect } from 'react'
 
-const useButtonAnimation = (animation?: ButtonAnimation, options?: { loading?: boolean }) => {
-  const { hover = true, tap = true } = animation || {}
+const getAnimationValues = (animation?: ButtonAnimation | boolean) => {
+  if (typeof animation === 'boolean') {
+    return {
+      hover: animation,
+      tap: animation,
+    }
+  }
+  
+  return {
+    hover: animation?.hover ?? true,
+    tap: animation?.tap ?? true,
+  }
+}
+
+const useButtonAnimation = (
+  animation?: ButtonAnimation | boolean,
+  options?: { loading?: boolean }
+) => {
+  const { hover, tap } = getAnimationValues(animation)
   const { loading } = options || {}
 
   const [scope, animate] = useAnimate()

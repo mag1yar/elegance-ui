@@ -9,6 +9,12 @@
   border-radius: 6px;
   font-family: var(--elegance-font-family);
   font-size: 12px;
+
+  svg {
+    width: 1rem;
+    height: 1rem;
+    flex-shrink: 0;
+  }
 }
 
 .button:disabled {

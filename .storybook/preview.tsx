@@ -2,7 +2,7 @@ import React from '@storybook/react'
 import type { Preview } from '@storybook/react'
 import { EleganceProvider } from '../src/components'
 import 'non.geist'
-import '../src/global.css'
+import '../src/styles.css'
 
 const preview: Preview = {
   parameters: {
