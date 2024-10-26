@@ -1,6 +1,7 @@
 import { ButtonHTMLAttributes } from 'react'
 import { VariantProps } from 'class-variance-authority'
 import { buttonVariants } from './Button.variants'
+import { UseProps } from '../../hooks/use-props'
 
 export type ButtonAnimation = {
   /** default `true` */
@@ -10,7 +11,8 @@ export type ButtonAnimation = {
 }
 
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> &
-  VariantProps<typeof buttonVariants> & {
+  VariantProps<typeof buttonVariants> &
+  UseProps & {
     asChild?: boolean
     animation?: ButtonAnimation | boolean
   }

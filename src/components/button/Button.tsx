@@ -3,7 +3,7 @@ import { ButtonProps } from './Button.types'
 import clsx from 'clsx'
 import { buttonVariants } from './Button.variants'
 import { Slot } from '@radix-ui/react-slot'
-import { useMergeRefs } from '../../hooks'
+import { useMergeRefs, useProps } from '../../hooks'
 import { useButtonAnimation } from './hooks'
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
@@ -17,7 +17,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
     onMouseDown,
     onMouseUp,
     ...rest
-  } = props
+  } = useProps('Button', props)
 
   const Comp = asChild ? Slot : 'button'
 

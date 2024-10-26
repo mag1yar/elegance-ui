@@ -16,7 +16,7 @@ import { useCallback } from 'react'
  *   return <div ref={mergedRef}>Hello, world!</div>;
  * }
  */
-function useMergeRefs<T = any>(...refs: (React.Ref<T> | undefined)[]): React.RefCallback<T> {
+export function useMergeRefs<T = any>(...refs: (React.Ref<T> | undefined)[]): React.RefCallback<T> {
   return useCallback((value) => {
     refs.forEach((ref) => {
       if (typeof ref === 'function') {
@@ -27,5 +27,3 @@ function useMergeRefs<T = any>(...refs: (React.Ref<T> | undefined)[]): React.Ref
     })
   }, refs)
 }
-
-export default useMergeRefs

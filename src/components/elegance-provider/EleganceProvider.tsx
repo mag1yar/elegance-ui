@@ -5,15 +5,16 @@ import { EleganceProviderProps } from './EleganceProvider.types'
 import { createCSSVariables } from './utils'
 
 const EleganceProvider = (props: EleganceProviderProps) => {
-  const { theme = defaultTheme, children } = props
+  const { theme = defaultTheme, children, id } = props
 
   const cssVariables = useMemo(() => createCSSVariables(theme), [theme])
 
   return (
     <Provider
-      initialState={{
+      id={id}
+      initialState={() => ({
         theme,
-      }}
+      })}
     >
       <style
         dangerouslySetInnerHTML={{

@@ -1,73 +1,150 @@
-import { createContext as createReactContext, useContext } from 'react'
-import { create, StoreApi, UseBoundStore } from 'zustand'
-import { ProviderProps } from './types'
+import {
+  createContext as createReactContext,
+  useContext,
+  useRef,
+  useMemo,
+  createElement,
+} from 'react'
+import { create } from 'zustand'
+import { ContextInstance, ContextProviderProps, ContextValue, SelectorType } from './types'
 
-type Store<T> = UseBoundStore<StoreApi<T>>
+/** Default context instance identifier */
+const DEFAULT_ID = 'default'
 
 /**
- * Creates a context with a Zustand store and a selector hook.
+ * Creates a new context with Zustand store integration.
  *
- * @template T - The type of the store state.
- * @param {string} providerName - The name of the provider.
- * @returns {[React.FC<ProviderProps<T>>, <U>(selector: (state: T) => U, targetName?: string) => U]} A tuple containing the Provider component and the useContextSelector hook.
+ * @template State - The type of the state managed by the store
+ * @param name - Unique name for the context, used in error messages
+ * @returns A tuple containing:
+ *  - Provider component for wrapping parts of the app that need access to the store
+ *  - useSelector hook for selecting and subscribing to store state
+ *
+ * @example
+ * ```typescript
+ * type TodoState = {
+ *   todos: string[]
+ *   addTodo: (todo: string) => void
+ * }
+ *
+ * const [TodoProvider, useTodoSelector] = createContext<TodoState>('todos')
+ *
+ * // In your app:
+ * function App() {
+ *   return (
+ *     <TodoProvider initialState={(set) => ({
+ *       todos: [],
+ *       addTodo: (todo) => set((state) => ({ todos: [...state.todos, todo] }))
+ *     })}>
+ *       <TodoList />
+ *     </TodoProvider>
+ *   )
+ * }
+ *
+ * function TodoList() {
+ *   const todos = useTodoSelector(state => state.todos)
+ *   return <ul>{todos.map(todo => <li key={todo}>{todo}</li>)}</ul>
+ * }
+ * ```
  */
-export const createContext = <T extends object>(providerName: string) => {
-  const StoreContext = createReactContext<Store<T> | null>(null)
-  const NameContext = createReactContext<string | null>(null)
+export function createContext<State>(name: string) {
+  const Context = createReactContext<ContextInstance<State> | null>(null)
+  const errorMessage = `${name} context not found`
 
   /**
-   * Provider component that wraps children with the created contexts.
-   *
-   * @param {ProviderProps<T>} props The props for the Provider component.
-   * @returns {JSX.Element} The Provider component.
+   * Provider component that creates a new context instance with its own store.
+   * Can be nested to create multiple store instances identified by their IDs.
    */
-  const Provider = ({ name, children, initialState }: ProviderProps<T>) => {
-    const parentName = useContext(NameContext)
-    const fullName = parentName ? `${providerName}_${name}` : `${providerName}_${name || 'default'}`
+  const Provider = ({ children, id = DEFAULT_ID, initialState }: ContextProviderProps<State>) => {
+    const parentContext = useContext(Context)
 
-    const useStore = create<T>(() => {
-      if (initialState === undefined) {
-        throw new Error(`initialState must be provided for ${providerName}`)
-      }
-      return initialState
-    })
+    const store = useMemo(() => create(initialState), [initialState])
 
-    return (
-      <NameContext.Provider value={fullName}>
-        <StoreContext.Provider value={useStore}>{children}</StoreContext.Provider>
-      </NameContext.Provider>
+    const contextValue = useMemo<ContextValue<State>>(
+      () => ({
+        store,
+        id,
+        parentContext: parentContext,
+      }),
+      [id, parentContext]
     )
+
+    const contextInstance = useMemo<ContextInstance<State>>(
+      () => ({
+        value: contextValue,
+        id,
+      }),
+      [contextValue, id]
+    )
+
+    return createElement(Context.Provider, { value: contextInstance }, children)
   }
 
   /**
-   * Hook to select and use a part of the store state.
+   * Internal hook that retrieves the context instance for a given ID.
+   * Traverses up the context hierarchy if necessary.
    *
-   * @template U The type of the selected state.
-   * @param {(state: T) => U} selector A function to select a part of the state.
-   * @param {string} [targetName] Optional name to target a specific provider.
-   * @returns {U} The selected state.
-   * @throws {Error} Throws an error if no provider is found or if the target name doesn't match.
+   * @param targetId - Optional ID of the context instance to retrieve
+   * @returns The context value containing the store and metadata
+   * @throws Error if context is not found or if target ID doesn't exist
    */
-  const useContextSelector = <U,>(selector: (state: T) => U, targetName?: string): U => {
-    const store = useContext(StoreContext)
-    const contextName = useContext(NameContext)
+  function useContextStore(targetId?: string) {
+    const context = useContext(Context)
 
-    if (!store) {
-      throw new Error(`No provider found for ${providerName}`)
+    if (!context) {
+      throw new Error(errorMessage)
     }
 
-    if (targetName) {
-      const fullTargetName = `${providerName}_${targetName}`
+    const id = targetId ?? DEFAULT_ID
+    let currentContext: ContextInstance<State> | null = context
 
-      if (fullTargetName !== contextName) {
-        throw new Error(
-          `Provider with name "${targetName}" not found in ${providerName} context. Current context name: "${contextName}"`
-        )
+    while (currentContext) {
+      if (currentContext.id === id) {
+        return currentContext.value
       }
+      currentContext = currentContext.value.parentContext
     }
 
-    return store(selector)
+    throw new Error(`${name} context with id "${id}" not found`)
   }
 
-  return [Provider, useContextSelector] as const
+  /**
+   * Hook for selecting and subscribing to store state.
+   *
+   * @template SelectorOutput - The type of the selected value
+   * @param selector - Function that extracts a value from the store state
+   * @param targetId - Optional ID of the context instance to select from
+   * @returns The selected value from the store state
+   * @throws Error if context is not found or if target ID doesn't exist
+   *
+   * @example
+   * ```typescript
+   * // Select a single value
+   * const count = useSelector(state => state.count)
+   *
+   * // Select multiple values
+   * const { title, description } = useSelector(state => ({
+   *   title: state.title,
+   *   description: state.description
+   * }))
+   *
+   * // Select from a specific context instance
+   * const count = useSelector(state => state.count, "secondary")
+   * ```
+   */
+  function useSelector<SelectorOutput>(
+    selector: SelectorType<State, SelectorOutput>,
+    targetId?: string
+  ): SelectorOutput {
+    const { store } = useContextStore(targetId)
+    const selectorRef = useRef(selector)
+
+    useMemo(() => {
+      selectorRef.current = selector
+    }, [selector])
+
+    return store((state) => selectorRef.current(state))
+  }
+
+  return [Provider, useSelector] as const
 }

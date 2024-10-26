@@ -1,1 +1,2 @@
-export { default as useMergeRefs } from './useMergeRefs'
+export * from './useMergeRefs'
+export * from './use-props'
