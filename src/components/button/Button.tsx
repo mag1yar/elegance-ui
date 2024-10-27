@@ -1,7 +1,6 @@
 import { forwardRef } from 'react'
 import { ButtonProps } from './Button.types'
-import clsx from 'clsx'
-import { buttonVariants } from './Button.variants'
+import { useButtonStyles } from './Button.variants'
 import { Slot } from '@radix-ui/react-slot'
 import { useMergeRefs, useProps } from '../../hooks'
 import { useButtonAnimation } from './hooks'
@@ -10,16 +9,20 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
   const {
     asChild,
     className,
+    style,
     variant,
     animation,
     onMouseEnter,
     onMouseLeave,
     onMouseDown,
     onMouseUp,
+    size,
     ...rest
   } = useProps('Button', props)
 
   const Comp = asChild ? Slot : 'button'
+
+  const variants = useButtonStyles({ className, style, size, variant })
 
   const { scope, handleHoverStart, handleHoverEnd, handleTapStart, handleTapEnd } =
     useButtonAnimation(animation)
@@ -30,7 +33,8 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
     <Comp
       {...rest}
       ref={mergedRef}
-      className={clsx(buttonVariants({ className, variant }))}
+      className={variants.className}
+      style={variants.style}
       onMouseEnter={(e) => {
         handleHoverStart()
         onMouseEnter?.(e)

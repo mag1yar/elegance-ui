@@ -4,15 +4,14 @@
   display: inline-flex;
   align-items: center;
   gap: 3px;
-  height: 28px;
-  padding: 6px 8px;
+  padding: var(--button-padding-y) var(--button-padding-x);
   border-radius: 6px;
   font-family: var(--elegance-font-family);
-  font-size: 12px;
+  font-size: var(--button-font-size);
 
   svg {
-    width: 1rem;
-    height: 1rem;
+    width: var(--button-icon-size);
+    height: var(--button-icon-size);
     flex-shrink: 0;
   }
 }
@@ -22,30 +21,31 @@
   opacity: 0.5;
 }
 
-.filled {
+/* #region variants */
+.variant_filled {
   color: rgba(255, 255, 255, 0.81);
   background-color: rgb(25, 25, 25);
   border: 1px solid rgba(255, 255, 255, 0.13);
 }
 
-.filled:disabled {
+.variant_filled:disabled {
   background-color: rgb(200, 200, 200);
   color: rgba(0, 0, 0, 0.38);
   border-color: transparent;
 }
 
-.outline {
+.variant_outline {
   color: rgba(0, 0, 0, 0.81);
   background-color: transparent;
   border: 1px solid rgba(0, 0, 0, 0.13);
 }
 
-.outline:disabled {
+.variant_outline:disabled {
   color: rgba(0, 0, 0, 0.38);
   border-color: rgba(0, 0, 0, 0.12);
 }
 
-.text {
+.variant_text {
   user-select: auto;
   color: rgba(0, 0, 0, 0.81);
   background-color: transparent;
@@ -54,6 +54,58 @@
   height: auto;
 }
 
-.text:disabled {
+.variant_text:disabled {
   color: rgba(0, 0, 0, 0.38);
 }
+/* #endregion */
+
+/* #region sizes */
+.size_xxs {
+  --button-padding-x: 6px;
+  --button-padding-y: 2px;
+  --button-font-size: 11px;
+  --button-icon-size: 0.9rem;
+}
+
+.size_xs {
+  --button-padding-x: 8px;
+  --button-padding-y: 4px;
+  --button-font-size: 12px;
+  --button-icon-size: 1rem;
+}
+
+.size_sm {
+  --button-padding-x: 12px;
+  --button-padding-y: 6px;
+  --button-font-size: 14px;
+  --button-icon-size: 1.1rem;
+}
+
+.size_md {
+  --button-padding-x: 16px;
+  --button-padding-y: 8px;
+  --button-font-size: 16px;
+  --button-icon-size: 1.2rem;
+}
+
+.size_lg {
+  --button-padding-x: 20px;
+  --button-padding-y: 10px;
+  --button-font-size: 18px;
+  --button-icon-size: 1.4rem;
+}
+
+.size_xl {
+  --button-padding-x: 24px;
+  --button-padding-y: 12px;
+  --button-font-size: 20px;
+  --button-icon-size: 1.6rem;
+}
+
+.size_xxl {
+  --button-padding-x: 32px;
+  --button-padding-y: 16px;
+  --button-font-size: 24px;
+  --button-icon-size: 1.9rem;
+}
+/* #endregion */

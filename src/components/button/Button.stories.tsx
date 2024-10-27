@@ -22,6 +22,10 @@ const meta = {
       },
       options: ['filled', 'outline', 'text'],
     },
+    size: {
+      control: 'select',
+      options: ['xxs', 'xs', 'sm', 'md', 'lg', 'xl', 'xxl', 24, '24px'],
+    },
     animation: {
       control: {
         type: 'object',
@@ -46,6 +50,30 @@ export const Default: Story = {
     children: 'Button',
     variant: 'filled',
     disabled: false,
+  },
+}
+
+export const Sizes: Story = {
+  render: (args) => {
+    return (
+      <>
+        <Button {...args}>Custom</Button>
+        <br />
+        <Button size='xxs'>xxs</Button>
+        <Button size='xs'>xs</Button>
+        <Button size='sm'>sm</Button>
+        <Button size='md'>md</Button>
+        <Button size='lg'>lg</Button>
+        <Button size='xl'>xl</Button>
+        <Button size='xxl'>xxl</Button>
+        <br />
+        <Button size='10px'>10px</Button>
+        <Button size={10}>10</Button>
+        <Button size='20px'>20px</Button>
+        <Button size={20}>20</Button>
+        <Button size='1rem'>1rem</Button>
+      </>
+    )
   },
 }
 
@@ -88,14 +116,6 @@ export const NoAnimation: Story = {
   },
 }
 
-export const DefaultAnimation: Story = {
-  args: {
-    children: 'Default Animation',
-    variant: 'filled',
-    animation: true,
-  },
-}
-
 export const HoverOnlyAnimation: Story = {
   args: {
     children: 'Hover Only',
@@ -110,30 +130,4 @@ export const TapOnlyAnimation: Story = {
     variant: 'filled',
     animation: { hover: false, tap: true },
   },
-}
-
-export const AnimationStates: Story = {
-  render: () => (
-    <div className='flex gap-4'>
-      <Button variant='filled'>Default Animations</Button>
-      <Button
-        variant='filled'
-        animation={false}
-      >
-        No Animations
-      </Button>
-      <Button
-        variant='filled'
-        animation={{ hover: true, tap: false }}
-      >
-        Hover Only
-      </Button>
-      <Button
-        variant='filled'
-        animation={{ hover: false, tap: true }}
-      >
-        Tap Only
-      </Button>
-    </div>
-  ),
 }

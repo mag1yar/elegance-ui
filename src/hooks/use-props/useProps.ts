@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import { ComponentProps, useEleganceContext } from '../../components'
 
 export function useProps<K extends keyof ComponentProps>(
@@ -10,5 +11,6 @@ export function useProps<K extends keyof ComponentProps>(
   return {
     ...restProps,
     ...props,
+    className: clsx(componentName, restProps.className, props.className),
   }
 }

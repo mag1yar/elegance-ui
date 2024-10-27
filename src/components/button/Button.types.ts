@@ -1,6 +1,4 @@
 import { ButtonHTMLAttributes } from 'react'
-import { VariantProps } from 'class-variance-authority'
-import { buttonVariants } from './Button.variants'
 import { UseProps } from '../../hooks/use-props'
 
 export type ButtonAnimation = {
@@ -10,8 +8,13 @@ export type ButtonAnimation = {
   tap?: boolean
 }
 
+export type ButtonStyles = {
+  variant: 'text' | 'filled' | 'outline' | null | undefined
+  size: 'xxs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl' | (string & {}) | (number & {})
+}
+
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> &
-  VariantProps<typeof buttonVariants> &
+  Partial<ButtonStyles> &
   UseProps & {
     asChild?: boolean
     animation?: ButtonAnimation | boolean
